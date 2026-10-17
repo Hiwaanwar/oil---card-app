@@ -12,3 +12,46 @@ h1 { font-size: 1.2rem; margin-bottom: 30px; color: #ffd700; }
 .date-box { background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 10px; flex: 1; border: 1px solid rgba(255, 255, 255, 0.1); }
 .date-box span { display: block; font-size: 0.8rem; color: #aaa; margin-bottom: 5px; }
 .date-box strong { font-size: 1rem; color: #fff; }
+
+/* تنسيق قسم الحسابات الشخصية */
+.social-section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+}
+
+.author-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffd700; /* لون ذهبي */
+    margin-bottom: 15px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.social-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.social-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* ألوان الأزرار */
+.tiktok { background-color: #000000; }
+.instagram { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+.telegram { background-color: #0088cc; }
