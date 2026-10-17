@@ -8,7 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
@@ -19,29 +18,19 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v4
-      with:
-        packages: 'platform-tools'
-
-    # 1. تنزيل مشروع أندرويد بسيط وجاهز
-    - name: Download Android Template
+    - name: Download Gradle
       run: |
-        git clone https://github.com/facebook/react-native.git temp_repo
-        
-    # 2. إنشاء مشروع أندرويد نظيف (بدون React)
-    - name: Create Android Project
+        wget https://services.gradle.org/distributions/gradle-7.5-bin.zip
+        unzip -q gradle-7.5-bin.zip
+
+    - name: Create Android Files
       run: |
         mkdir -p app/src/main/java/com/hiwaanwar/oilcard
         mkdir -p app/src/main/assets
-        mkdir -p app/src/main/res/values
-
-        # نسخ ملفاتك إلى مجلد assets
         cp index.html app/src/main/assets/
         cp style.css app/src/main/assets/
         cp script.js app/src/main/assets/
 
-        # إنشاء ملف AndroidManifest.xml
         cat << 'EOF' > app/src/main/AndroidManifest.xml
         <?xml version="1.0" encoding="utf-8"?>
         <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.hiwaanwar.oilcard">
@@ -56,7 +45,6 @@ jobs:
         </manifest>
         EOF
 
-        # إنشاء كود الجافا
         cat << 'EOF' > app/src/main/java/com/hiwaanwar/oilcard/MainActivity.java
         package com.hiwaanwar.oilcard;
         import android.app.Activity;
@@ -74,7 +62,6 @@ jobs:
         }
         EOF
 
-        # إنشاء ملفات Gradle
         cat << 'EOF' > app/build.gradle
         plugins { id 'com.android.application' }
         android {
@@ -97,17 +84,13 @@ jobs:
         echo "include ':app'" >> settings.gradle
         echo "org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8" > gradle.properties
 
-    # 3. تثبيت Gradle وبناء التطبيق
     - name: Build APK
       run: |
-        wget https://services.gradle.org/distributions/gradle-7.5-bin.zip
-        unzip -q gradle-7.5-bin.zip
         export PATH=$PATH:$PWD/gradle-7.5/bin
         gradle assembleDebug
 
-    # 4. رفع الملف الناتج
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: MyApp-APK
+        name: OilCard-Final-APK
         path: app/build/outputs/apk/debug/app-debug.apk
