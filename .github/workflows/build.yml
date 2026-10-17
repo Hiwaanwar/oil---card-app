@@ -1,4 +1,4 @@
-name: Build APK
+name: Build APK Simple
 
 on:
   push:
@@ -18,22 +18,37 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v4
-
-    - name: Build with Gradle
+    - name: Clone Template
       run: |
-        # إنشاء مشروع أندرويد بسيط
-        mkdir -p app/src/main/java/com/hiwaanwar/oilcard
+        git clone https://github.com/android/architecture-samples.git temp_android
+        cp -r temp_android/app .
+        cp -r temp_android/build.gradle .
+        cp -r temp_android/settings.gradle .
+        cp -r temp_android/gradle .
+        cp temp_android/gradlew .
+        cp temp_android/gradlew.bat .
+
+    - name: Add Files and Icon
+      run: |
         mkdir -p app/src/main/assets
         cp index.html app/src/main/assets/
         cp style.css app/src/main/assets/
         cp script.js app/src/main/assets/
 
+        # إضافة الأيقونة (إذا كان الملف icon.png موجوداً في المستودع)
+        if [ -f "icon.png" ]; then
+          mkdir -p app/src/main/res/mipmap-hdpi
+          cp icon.png app/src/main/res/mipmap-hdpi/ic_launcher.png
+        fi
+
+        # تعديل ملف AndroidManifest.xml
         cat << 'EOF' > app/src/main/AndroidManifest.xml
         <?xml version="1.0" encoding="utf-8"?>
-        <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.hiwaanwar.oilcard">
-            <application android:label="کۆبۆنی بەنزین" android:theme="@android:style/Theme.NoTitleBar">
+        <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.example.android.architecture.blueprints.todoapp">
+            <application 
+                android:label="کۆبۆنی بەنزین" 
+                android:icon="@mipmap/ic_launcher"
+                android:theme="@android:style/Theme.NoTitleBar">
                 <activity android:name=".MainActivity" android:exported="true">
                     <intent-filter>
                         <action android:name="android.intent.action.MAIN" />
@@ -44,8 +59,8 @@ jobs:
         </manifest>
         EOF
 
-        cat << 'EOF' > app/src/main/java/com/hiwaanwar/oilcard/MainActivity.java
-        package com.hiwaanwar.oilcard;
+        cat << 'EOF' > app/src/main/java/com/example/android/architecture/blueprints/todoapp/MainActivity.java
+        package com.example.android.architecture.blueprints.todoapp;
         import android.app.Activity;
         import android.os.Bundle;
         import android.webkit.WebView;
@@ -61,34 +76,13 @@ jobs:
         }
         EOF
 
-        cat << 'EOF' > app/build.gradle
-        plugins { id 'com.android.application' }
-        android {
-            namespace 'com.hiwaanwar.oilcard'
-            compileSdk 33
-            defaultConfig { applicationId "com.hiwaanwar.oilcard"; minSdk 21; targetSdk 33; versionCode 1; versionName "1.0" }
-            compileOptions { sourceCompatibility JavaVersion.VERSION_1_8; targetCompatibility JavaVersion.VERSION_1_8 }
-        }
-        EOF
-
-        cat << 'EOF' > build.gradle
-        buildscript {
-            repositories { google(); mavenCentral() }
-            dependencies { classpath 'com.android.tools.build:gradle:7.4.2' }
-        }
-        allprojects { repositories { google(); mavenCentral() } }
-        EOF
-
-        echo "rootProject.name = 'OilCardApp'" > settings.gradle
-        echo "include ':app'" >> settings.gradle
-        echo "org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8" > gradle.properties
-
-        # بناء التطبيق
-        gradle wrapper --gradle-version 7.5
+    - name: Build APK
+      run: |
+        chmod +x gradlew
         ./gradlew assembleDebug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: OilCard-APK
+        name: OilCard-Final-APK
         path: app/build/outputs/apk/debug/app-debug.apk
