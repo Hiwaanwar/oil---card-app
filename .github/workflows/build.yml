@@ -39,7 +39,7 @@ jobs:
         mkdir -p app/src/main/res/mipmap-hdpi
         cp icon.png app/src/main/res/mipmap-hdpi/ic_launcher.png
 
-        # تعديل ملف AndroidManifest.xml (هنا تم تغيير الاسم)
+        # تعديل ملف AndroidManifest.xml (الاسم الجديد + الأيقونة)
         cat << 'EOF' > app/src/main/AndroidManifest.xml
         <?xml version="1.0" encoding="utf-8"?>
         <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.example.android.architecture.blueprints.todoapp">
